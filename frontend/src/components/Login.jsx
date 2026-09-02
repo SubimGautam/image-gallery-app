@@ -27,7 +27,9 @@ const Login = () => {
         setMessage(data.message);
 
         if (response.ok) {
-            navigate('/dashboard');
+            console.log(data.user)
+            localStorage.setItem('user', JSON.stringify(data.user));
+            navigate('/');
         }
 
     } catch (error) {

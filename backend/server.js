@@ -1,14 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ObjectId } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');  // MongoClient allows Node.js to connect to MongoDB. ObjectId is useful when working with MongoDB document IDs.
 const multer = require('multer');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-// const { use } = require('react');
 
-require('dotenv').config();
+require('dotenv').config();  // This allows us to use variables from your .env file.
 
-const app = express();
+const app = express();  // This creates our Express application.
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
         cb(null, 'uploads/')
@@ -20,11 +19,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage});
 
-app.use(cors());
-app.use(express.json());
+app.use(cors());  // Allow requests from other origins.
+app.use(express.json());  // This tells Express to understand JSON request bodies.
 app.use('/uploads', express.static('uploads'));
 
-const client = new MongoClient(process.env.MONGO_URI);
+const client = new MongoClient(process.env.MONGO_URI);  // This creates a MongoDB client using your connection string.
 
 async function startServer() {
 
@@ -33,23 +32,35 @@ async function startServer() {
         await client.connect();
 
         console.log('MongoDB connected successfully');
+
         const db = client.db('ImageGalleryApp');
         const imagesCollection = db.collection('images');
         const usersCollection = db.collection('users');
 
-        app.get('/api/dashboard', async(req,res) => {
-            try{
-                const totalImages = imagesCollection.countDocuments();
+
+        // Dashboard route
+        app.get('/api/dashboard', async (req, res) => {
+
+            try {
+
+                const totalImages =
+                    await imagesCollection.countDocuments();
+
                 res.json({
                     totalImages: totalImages
                 });
-            } catch(error){
-                console.log(error)
+
+            } catch (error) {
+
+                console.log(error);
+
                 res.status(500).json({
                     message: 'Failed to get dashboard data'
-                })
+                });
+
             }
-        })
+
+        });
 
         app.get('/api/images', async(req,res)=> {
             try{
@@ -141,7 +152,7 @@ async function startServer() {
 
         app.post('/api/login', async (req, res) => {
             try{
-                const { email, password } = req.body;
+                const { email, password } = req.body; // extracts info from frontend
                 if(!email || !password) {
                     return res.status(400).json ({
                         message: 'Please Provide email and Password'
@@ -190,6 +201,7 @@ async function startServer() {
             title: req.body.title,
             author: req.body.author,
             uploadcategory: req.body.uploadcategory,
+            userId: req.body.userId,
             imageUrl: `/uploads/${req.file.filename}`, 
 
         };
@@ -244,6 +256,7 @@ async function startServer() {
         console.log(error);
 
     }
+
 }
 
 startServer();

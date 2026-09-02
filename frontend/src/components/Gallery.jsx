@@ -27,12 +27,14 @@ const Gallery = () => {
             alert('Please upload an image')
             return;
         }
+        const user = JSON.parse(localStorage.getItem('user'))
         const formdata = new FormData();
         formdata.append('image', selectedImage);
         formdata.append('title', title);
         formdata.append('author', author);
         formdata.append('category', category);
         formdata.append('uploadcategory', uploadcategory);
+        formdata.append('userId', user.id);
         try{
             const response = await fetch('http://localhost:5000/api/images', {
                 method: 'POST',
