@@ -37,6 +37,20 @@ async function startServer() {
         const imagesCollection = db.collection('images');
         const usersCollection = db.collection('users');
 
+        app.get('/api/dashboard', async(req,res) => {
+            try{
+                const totalImages = imagesCollection.countDocuments();
+                res.json({
+                    totalImages: totalImages
+                });
+            } catch(error){
+                console.log(error)
+                res.status(500).json({
+                    message: 'Failed to get dashboard data'
+                })
+            }
+        })
+
         app.get('/api/images', async(req,res)=> {
             try{
                 const images = await imagesCollection.find().toArray();
