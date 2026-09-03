@@ -5,6 +5,7 @@ const multer = require('multer');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const authMiddleware = require('./authMiddleware');
 
 require('dotenv').config();  // This allows us to use variables from your .env file.
 
@@ -37,12 +38,10 @@ async function startServer() {
         const imagesCollection = db.collection('images');
         const usersCollection = db.collection('users');
 
-        app.get('/api/dashboard/:userId', async (req,res) => {
+        app.get('/api/dashboard', authMiddleware, async (req,res) => {
             try{
-                const userId = req.params.Id;
-                const images = await images.find({
-                    userId: userId
-                }).toArray();
+                const userId = req.userId;
+                const images = await imagesCollection.find({userId: userId}).toArray();
                 res.json({
                     totalImages: images.length,
                     images: images
@@ -193,7 +192,7 @@ async function startServer() {
             }
         });
 
-        app.post('/api/images', upload.single('image'), async (req, res) => {
+        app.post('/api/images', authMiddleware ,upload.single('image'), async (req, res) => {
 
     try {
 
@@ -204,8 +203,8 @@ async function startServer() {
             title: req.body.title,
             author: req.body.author,
             uploadcategory: req.body.uploadcategory,
-            userId: req.body.userId,
-            imageUrl: `/uploads/${req.file.filename}`, 
+            userId: req.userId, 
+            imageUrl: `/uploads/${req.file.filename}`,
 
         };
 
@@ -223,10 +222,27 @@ async function startServer() {
     }
 });
 
-    app.put('/api/images/:id', async (req, res) => {
+    app.put('/api/images/:id',authMiddleware, async (req, res) => {
     try {
         const id = req.params.id;
         const { title, author, uploadcategory } = req.body;
+
+        const image = await imagesCollection.findOne({
+            _id: new ObjectId(id)
+        });
+
+        if(!image){
+            return res.status(401).json({
+                message: 'Image not found'
+            });
+        }
+
+        if(image.userId !== req.userId){
+            return res.status(401).json({
+                message: 'You are not allowed to edit this image'
+            });
+        }
+
         const result = await imagesCollection.updateOne(
             { _id: new ObjectId(id) },
             {

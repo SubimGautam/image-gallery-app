@@ -27,22 +27,24 @@ const Gallery = () => {
             alert('Please upload an image')
             return;
         }
-        const user = JSON.parse(localStorage.getItem('user'))
+        const token = localStorage.getItem('token');
         const formdata = new FormData();
         formdata.append('image', selectedImage);
         formdata.append('title', title);
         formdata.append('author', author);
         formdata.append('category', category);
         formdata.append('uploadcategory', uploadcategory);
-        formdata.append('userId', user.id);
         try{
             const response = await fetch('http://localhost:5000/api/images', {
                 method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
                 body: formdata
             });
             const data = await response.json();
             console.log(data);
-            const updatedResponse = await fetch('http://localhost:5000/api/images');
+            const updatedResponse = await fetch('http://localhost:5000/api/images');    
             const updatedImages = await updatedResponse.json();
             setImages(updatedImages);
             setSelectedImage(null);
@@ -54,10 +56,13 @@ const Gallery = () => {
     };
 
     const handleEdit = (image) => {
+        console.log('Edit Clicked');
+        console.log(image);
         seteditingImage(image);
         setTitle(image.title);
         setAuthor(image.author);
         setUploadcategory(image.uploadcategory);
+        console.log('editingImage should now be:', image);
     }
 
     const handleUpdate = async () => {
@@ -128,6 +133,46 @@ const Gallery = () => {
             </button>
         </div>
         <div className='upload-section'>
+            {editingImage && (
+    <div className="edit-form">
+
+        <h2>Edit Image</h2>
+
+        <input
+            type="text"
+            placeholder="Image title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+        />
+
+        <input
+            type="text"
+            placeholder="Author name"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+        />
+
+        <select
+            value={uploadcategory}
+            onChange={(e) => setUploadcategory(e.target.value)}
+        >
+            <option value="">Select Category</option>
+            <option value="Nature">Nature</option>
+            <option value="People">People</option>
+            <option value="Animal">Animal</option>
+            <option value="Building">Building</option>
+        </select>
+
+        <button onClick={handleUpdate}>
+            Update
+        </button>
+
+        <button onClick={() => seteditingImage(null)}>
+            Cancel
+        </button>
+
+    </div>
+)}
             <input
                 type="file"
                 accept="image/*"
@@ -157,16 +202,12 @@ const Gallery = () => {
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
             />
-            {editingImage ? (
-                <button onClick={handleUpdate}>
-                    Update
-                </button>
-            ) : (
                 <button onClick={handleUpload}>
                     Upload image
                 </button>
-            )}
+            
         </div>
+        
         <div className='filters'>
             <button onClick={() => setCategory('All')}>All</button>
             <button onClick={() => setCategory('Nature')}>Nature</button>

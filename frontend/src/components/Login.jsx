@@ -1,65 +1,107 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+// import "./Auth.css";
 
 const Login = () => {
+
     const navigate = useNavigate();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
 
     const handleSignin = async () => {
-    try {
-        const response = await fetch('http://localhost:5000/api/login', {
-            method: 'POST',
 
-            headers: {
-                'Content-Type': 'application/json'
-            },
+        try {
 
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        });
+            const response = await fetch(
+                'http://localhost:5000/api/login',
+                {
+                    method: 'POST',
 
-        const data = await response.json();
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
 
-        setMessage(data.message);
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                }
+            );
 
-        if (response.ok) {
-            console.log(data)
-            localStorage.setItem('user', JSON.stringify(data.user));
-            navigate('/');
+            const data = await response.json();
+
+            setMessage(data.message);
+
+            if (response.ok) {
+
+                console.log(data);
+
+                localStorage.setItem('token', data.token);
+
+                localStorage.setItem(
+                    'user',
+                    JSON.stringify(data.user)
+                );
+
+                navigate('/');
+            }
+
+        } catch (error) {
+            console.log(error);
         }
-
-    } catch (error) {
-        console.log(error);
-    }
-};
+    };
 
     return (
-        <div>
-            <h1>Login</h1>
 
-            <input
-                type="text"
-                placeholder="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
+        <div className="auth-page">
 
-            <input
-                type="password"
-                placeholder="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="auth-card">
 
-            <button onClick={handleSignin}>
-                Login
-            </button>
+                <h1>Welcome Back</h1>
 
-            <p>{message}</p>
+                <p className="auth-subtitle">
+                    Login to your image gallery
+                </p>
+
+                <input
+                    className="auth-input"
+                    type="text"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+
+                <input
+                    className="auth-input"
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+
+                <button
+                    className="auth-button"
+                    onClick={handleSignin}
+                >
+                    Login
+                </button>
+
+                <p className="auth-message">
+                    {message}
+                </p>
+
+                <p className="auth-switch">
+                    Don't have an account?
+
+                    <span onClick={() => navigate('/signup')}>
+                        Sign up
+                    </span>
+                </p>
+
+            </div>
+
         </div>
     );
 };

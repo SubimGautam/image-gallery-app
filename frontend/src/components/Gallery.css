@@ -1,67 +1,370 @@
-.album{
-    transform: translate(800px,5px);
-    font-size: 40px;
-    width: 100%;
+/* =========================
+   MAIN GALLERY
+========================= */
+
+.album {
+    min-height: 100vh;
+    padding: 40px 60px;
+    background: #f5f7fb;
+    font-family: Arial, sans-serif;
+    color: #222;
 }
 
-.search-bar input{
-    width: 300px;
-    padding: 12px;
-    font-size: 18px;
+.album > :first-child {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 30px;
 }
 
-.search-bar button{
-    border: none;
-    background: none;
-    cursor: pointer;
-}
 
-.search-bar button img{
-    width: 50px;
-    height: 50px;
-    transform: translate(0px, 17px);
-}
+/* =========================
+   SEARCH BAR
+========================= */
 
-.image-info h3{
-    font-size: 15px;
-    transform: translate(90px,-8px);
-}
-
-.gallery-images{
-    display: grid;
-    grid-template-columns: repeat(6,300px);
-    transform: translate(-775px, 15px);
-    gap: 20px;
-    padding: 20px;
-}
-
-.image-card > img{
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-}
-
-.filters{
+.search-bar {
     display: flex;
-    gap: 10px;
-    margin-top: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
-.filters button{
+.search-bar input {
+    width: 400px;
+    padding: 14px 18px;
+    border: 1px solid #ddd;
+    border-radius: 12px 0 0 12px;
+    outline: none;
+    font-size: 16px;
+    background: white;
+}
+
+.search-bar input:focus {
+    border-color: #6c63ff;
+}
+
+.search-bar button {
+    width: 55px;
+    height: 48px;
     border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    background: #eeeeee;
-    font-size: 14px;
+    border-radius: 0 12px 12px 0;
+    background: #6c63ff;
     cursor: pointer;
+}
+
+.search-bar img {
+    width: 22px;
+    filter: brightness(0) invert(1);
+}
+
+
+/* =========================
+   UPLOAD SECTION
+========================= */
+
+.upload-section {
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+
+.upload-section input,
+.upload-section select {
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+}
+
+.upload-section input:focus,
+.upload-section select:focus {
+    border-color: #6c63ff;
+}
+
+.upload-section button {
+    padding: 12px 22px;
+    border: none;
+    border-radius: 10px;
+    background: #6c63ff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.upload-section button:hover {
+    transform: translateY(-2px);
+    background: #574fd6;
+}
+
+
+/* =========================
+   EDIT FORM
+========================= */
+
+.edit-form {
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+
+.edit-form h2 {
+    width: 100%;
+    margin: 0 0 5px;
+    font-size: 22px;
+}
+
+.edit-form input,
+.edit-form select {
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+}
+
+.edit-form input:focus,
+.edit-form select:focus {
+    border-color: #6c63ff;
+}
+
+.edit-form button {
+    padding: 12px 22px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.edit-form button:first-of-type {
+    background: #6c63ff;
+    color: white;
+}
+
+.edit-form button:last-of-type {
+    background: #eee;
+    color: #333;
+}
+
+
+/* =========================
+   FILTER BUTTONS
+========================= */
+
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 35px;
+}
+
+.filters button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: white;
+    color: #555;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    transition: 0.2s;
 }
 
 .filters button:hover {
-    background: #dcdcdc;
+    background: #6c63ff;
+    color: white;
+    transform: translateY(-2px);
 }
 
-.image-preview{
-    border: none;
+
+/* =========================
+   IMAGE GRID
+========================= */
+
+.gallery-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+
+/* =========================
+   IMAGE CARD
+========================= */
+
+.image-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+
+    transition: 0.3s;
+}
+
+.image-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.image-card > img {
     width: 100%;
+    height: 230px;
+    object-fit: cover;
+    display: block;
+    cursor: pointer;
+}
+
+
+/* =========================
+   IMAGE INFORMATION
+========================= */
+
+.image-info {
+    padding: 18px;
+}
+
+.image-info h3 {
+    margin: 0 0 6px;
+    font-size: 20px;
+}
+
+.image-info p {
+    margin: 0 0 15px;
+    color: #777;
+}
+
+
+/* =========================
+   EDIT / DELETE BUTTONS
+========================= */
+
+.image-info button {
+    padding: 9px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-right: 8px;
+    font-weight: 600;
+}
+
+.image-info button:first-of-type {
+    background: #eee;
+    color: #333;
+}
+
+.image-info button:last-of-type {
+    background: #ffeded;
+    color: #e63946;
+}
+
+.image-info button:hover {
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
+
+.image-preview {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.75);
+
     display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1000;
+}
+
+.preview-content {
+    position: relative;
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+
+    max-width: 700px;
+    width: 90%;
+}
+
+.preview-content > img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.preview-content button {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+
+    width: 35px;
+    height: 35px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #222;
+    color: white;
+
+    cursor: pointer;
+    font-weight: bold;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+    .album {
+        padding: 25px 20px;
+    }
+
+    .search-bar input {
+        width: 100%;
+    }
+
+    .upload-section,
+    .edit-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .upload-section input,
+    .upload-section select,
+    .upload-section button,
+    .edit-form input,
+    .edit-form select,
+    .edit-form button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .filters {
+        flex-wrap: wrap;
+    }
+
+    .gallery-images {
+        grid-template-columns: 1fr;
+    }
 }
