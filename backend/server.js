@@ -53,9 +53,11 @@ async function startServer() {
                 })
             }
         })
-        app.get('/api/images', async(req,res)=> {
+        app.get('/api/images', authMiddleware ,async(req,res)=> {
             try{
-                const images = await imagesCollection.find().toArray();
+                console.log("Logged in user: ", req.userId)
+                const images = await imagesCollection.find({userId: req.userId}).toArray();
+                console.log("Images for the user", images)
 
                 res.json(images);
             } catch (error){

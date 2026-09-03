@@ -12,22 +12,33 @@ const Gallery = () => {
     const [previewImage, setPreviewImage] = useState('');
     const [editingImage, seteditingImage] = useState(null);
     useEffect(() => {
-        fetch('http://localhost:5000/api/images')
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
+    const getImages = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(
+                'http://localhost:5000/api/images',
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            const data = await response.json();
+            console.log('GET IMAGES:', data);
             setImages(data);
-        })
-        .catch(error => {
+        } catch (error) {
             console.log(error);
-        });
-    }, []);
+        }
+    };
+    getImages();
+
+}, []);
     const handleUpload = async () => {
         if (!selectedImage){
             alert('Please upload an image')
             return;
         }
-        const token = localStorage.getItem('token');
+        // const token = localStorage.getItem('token');
         const formdata = new FormData();
         formdata.append('image', selectedImage);
         formdata.append('title', title);
@@ -35,6 +46,7 @@ const Gallery = () => {
         formdata.append('category', category);
         formdata.append('uploadcategory', uploadcategory);
         try{
+            const token = localStorage.getItem('token')
             const response = await fetch('http://localhost:5000/api/images', {
                 method: 'POST',
                 headers: {
@@ -44,7 +56,11 @@ const Gallery = () => {
             });
             const data = await response.json();
             console.log(data);
-            const updatedResponse = await fetch('http://localhost:5000/api/images');    
+            const updatedResponse = await fetch('http://localhost:5000/api/images', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });    
             const updatedImages = await updatedResponse.json();
             setImages(updatedImages);
             setSelectedImage(null);
