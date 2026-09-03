@@ -4,6 +4,7 @@ const { MongoClient, ObjectId } = require('mongodb');  // MongoClient allows Nod
 const multer = require('multer');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 require('dotenv').config();  // This allows us to use variables from your .env file.
 
@@ -16,7 +17,6 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + '-' + file.originalname);
     }
 });
-
 const upload = multer({storage: storage});
 
 app.use(cors());  // Allow requests from other origins.
@@ -37,31 +37,23 @@ async function startServer() {
         const imagesCollection = db.collection('images');
         const usersCollection = db.collection('users');
 
-
-        // Dashboard route
-        app.get('/api/dashboard', async (req, res) => {
-
-            try {
-
-                const totalImages =
-                    await imagesCollection.countDocuments();
-
+        app.get('/api/dashboard/:userId', async (req,res) => {
+            try{
+                const userId = req.params.Id;
+                const images = await images.find({
+                    userId: userId
+                }).toArray();
                 res.json({
-                    totalImages: totalImages
+                    totalImages: images.length,
+                    images: images
                 });
-
-            } catch (error) {
-
-                console.log(error);
-
-                res.status(500).json({
+            } catch(error) {
+                console.log(error)
+                res.statusCode(500).json({
                     message: 'Failed to get dashboard data'
-                });
-
+                })
             }
-
-        });
-
+        })
         app.get('/api/images', async(req,res)=> {
             try{
                 const images = await imagesCollection.find().toArray();
@@ -172,8 +164,19 @@ async function startServer() {
                         message: 'HAHA wrong Password'
                     });
                 }
+               const token  = jwt.sign(
+                    {
+                        userId: user._id.toString()
+                    },
+                    process.env.JWT_SECRET,
+                    {
+                        expiresIn: '1h'
+                    }
+                );
+
                 res.json({
                     message: 'Login Successful',
+                    token: token,
                     user: {
                         id: user._id,
                         name: user.name,

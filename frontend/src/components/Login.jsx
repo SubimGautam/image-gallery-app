@@ -27,7 +27,7 @@ const Login = () => {
         setMessage(data.message);
 
         if (response.ok) {
-            console.log(data.user)
+            console.log(data)
             localStorage.setItem('user', JSON.stringify(data.user));
             navigate('/');
         }

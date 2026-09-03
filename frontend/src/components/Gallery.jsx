@@ -157,9 +157,15 @@ const Gallery = () => {
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
             />
-            <button onClick={handleUpload}>
-                Upload image
-            </button>
+            {editingImage ? (
+                <button onClick={handleUpdate}>
+                    Update
+                </button>
+            ) : (
+                <button onClick={handleUpload}>
+                    Upload image
+                </button>
+            )}
         </div>
         <div className='filters'>
             <button onClick={() => setCategory('All')}>All</button>
