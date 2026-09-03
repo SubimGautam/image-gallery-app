@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import './Signup.css'
 
 const Signup = () => {
 
@@ -28,32 +29,46 @@ const Signup = () => {
     }
 
     return(
-        <div>
-            <h1>Sign up</h1>
-            <input 
-            type='text'
-            placeholder='name'
+        <div className="signup-page">
+
+    <div className="signup-card">
+
+        <h1>Sign up</h1>
+
+        <input
+            className="signup-input"
+            type="text"
+            placeholder="name"
             value={name}
-            onChange={(e)=> setName(e.target.value)}
-            />
+            onChange={(e) => setName(e.target.value)}
+        />
 
-            <input 
-            type='email'
-            placeholder='email'
+        <input
+            className="signup-input"
+            type="email"
+            placeholder="email"
             value={email}
-            onChange={(e)=> setEmail(e.target.value)}
-            />
+            onChange={(e) => setEmail(e.target.value)}
+        />
 
-            <input 
-            type='password'
-            placeholder='password'
+        <input
+            className="signup-input"
+            type="password"
+            placeholder="password"
             value={password}
-            onChange={(e)=> setPassword(e.target.value)}
-            />
-            <button onClick={handleSignup}>
-                Signup
-            </button>
-        </div>
+            onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button
+            className="signup-button"
+            onClick={handleSignup}
+        >
+            Signup
+        </button>
+
+    </div>
+
+</div>
     )
 }
 

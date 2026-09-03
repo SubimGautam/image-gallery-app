@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './Gallery.css'
-import Search from '../assets/search icon.png'
+import Search from '../../assets/search icon.png'
 const Gallery = () => {
     const [images,setImages] = useState([]);
     const [search, setSearch] = useState('');
