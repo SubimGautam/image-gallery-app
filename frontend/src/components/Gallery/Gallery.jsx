@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './Gallery.css'
 import Search from '../../assets/search icon.png'
+import { useNavigate } from "react-router-dom";
 const Gallery = () => {
     const [images,setImages] = useState([]);
     const [search, setSearch] = useState('');
@@ -11,10 +12,17 @@ const Gallery = () => {
     const [uploadcategory, setUploadcategory] = useState('');
     const [previewImage, setPreviewImage] = useState('');
     const [editingImage, seteditingImage] = useState(null);
+    const [showUploadModal, setShowUploadModal] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const navigate = useNavigate();
     useEffect(() => {
     const getImages = async () => {
         try {
             const token = localStorage.getItem('token');
+            if(!token){
+                navigate('/login');
+                return;
+            }
             const response = await fetch(
                 'http://localhost:5000/api/images',
                 {
@@ -32,7 +40,7 @@ const Gallery = () => {
     };
     getImages();
 
-}, []);
+}, [navigate]);
     const handleUpload = async () => {
         if (!selectedImage){
             alert('Please upload an image')
@@ -66,6 +74,8 @@ const Gallery = () => {
             setSelectedImage(null);
             setTitle('');
             setAuthor('');
+            setUploadcategory('');
+            setShowUploadModal(false);
         }catch (error) {
             console.log(error);
         }
@@ -83,10 +93,12 @@ const Gallery = () => {
 
     const handleUpdate = async () => {
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`http://localhost:5000/api/images/${editingImage._id}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
                 title: title,
@@ -98,6 +110,11 @@ const Gallery = () => {
         const data = await response.json();
 
         console.log(data);
+
+        if(!response.ok) {
+            console.log('Update Failed', data);
+            return;
+        }
 
         setImages(images.map((image) =>
             image._id === editingImage._id
@@ -130,25 +147,59 @@ const Gallery = () => {
         }
     }
 
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            setSelectedImage(e.dataTransfer.files[0]);
+        }
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = () => {
+        setIsDragging(false);
+    };
+
+    const closeUploadModal = () => {
+        setShowUploadModal(false);
+        setSelectedImage(null);
+        setTitle('');
+        setAuthor('');
+        setUploadcategory('');
+    };
+
     const filterImages = images.filter((image) =>
         (image.author || '').toLowerCase().includes(search.toLowerCase()) &&
         (category === 'All' || image.uploadcategory === category)
     );
+
     return (
     <div className='album'>
-        Image Gallery App
-        <div className='search-bar'>
-            <input
-                type="text"
-                placeholder='Search images..'
-                value={search}
-                onChange={(e)=> setSearch(e.target.value)}
-            />
-            <button>
+        <header className='navbar'>
+            <div className='navbar-logo'>PIX</div>
+
+            <div className='navbar-search'>
+                <input
+                    type="text"
+                    placeholder='Search'
+                    value={search}
+                    onChange={(e)=> setSearch(e.target.value)}
+                />
                 <img src={Search} alt="Search"/>
-            </button>
-        </div>
-        <div className='upload-section'>
+            </div>
+
+            <div className='navbar-actions'>
+                <button className='navbar-link'>Filter</button>
+                <button className='navbar-login' onClick={() => navigate('/login')}>Login</button>
+                <button className='navbar-submit' onClick={() => navigate('/signup')}>Signup</button>
+            </div>
+        </header>
+
+        <div className='gallery-toolbar'>
             {editingImage && (
     <div className="edit-form">
 
@@ -189,57 +240,31 @@ const Gallery = () => {
 
     </div>
 )}
-            <input
-                type="file"
-                accept="image/*"
-                onChange={(e)=>setSelectedImage(e.target.files[0])}
-            />
 
-            <select 
-            value={uploadcategory}
-            onChange={(e) => setUploadcategory(e.target.value)}
-            >
-                <option value="">Select Category</option>
-                <option value="Nature">Nature</option>
-                <option value="People">People</option>
-                <option value="Animal">Animal</option>
-                <option value="Building">Building</option>
-            </select>
+            <div className='filters'>
+                <button className={category === 'All' ? 'active' : ''} onClick={() => setCategory('All')}>All</button>
+                <button className={category === 'Nature' ? 'active' : ''} onClick={() => setCategory('Nature')}>Nature</button>
+                <button className={category === 'People' ? 'active' : ''} onClick={() => setCategory('People')}>People</button>
+                <button className={category === 'Animal' ? 'active' : ''} onClick={() => setCategory('Animal')}>Animal</button>
+                <button className={category === 'Building' ? 'active' : ''} onClick={() => setCategory('Building')}>Building</button>
+            </div>
 
-            <input
-                type="text"
-                placeholder="Image title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            />
-            <input
-                type="text"
-                placeholder="Author name"
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-            />
-                <button onClick={handleUpload}>
-                    Upload image
-                </button>
-            
+            <button className='add-photo-btn' onClick={() => setShowUploadModal(true)}>
+                + Add Photo
+            </button>
         </div>
-        
-        <div className='filters'>
-            <button onClick={() => setCategory('All')}>All</button>
-            <button onClick={() => setCategory('Nature')}>Nature</button>
-            <button onClick={() => setCategory('People')}>People</button>
-            <button onClick={() => setCategory('Animal')}>Animal</button>
-            <button onClick={() => setCategory('Building')}>Building</button>
-        </div>
+
         <div className='gallery-images'>
             
             {filterImages.map((image) => (
                 <div className='image-card' key={image._id}>
-                    <img
-                        src={`http://localhost:5000${image.imageUrl}`}
-                        alt={image.author}
-                        onClick={() => setPreviewImage(image)}
-                    />
+                    <div className='image-frame'>
+                        <img
+                            src={`http://localhost:5000${image.imageUrl}`}
+                            alt={image.author}
+                            onClick={() => setPreviewImage(image)}
+                        />
+                    </div>
                     <div className='image-info'>
                         <h3>{image.title || 'Untitled'}</h3>
                         <p>{image.author || 'Unknown'}</p>
@@ -272,6 +297,73 @@ const Gallery = () => {
     </div>
 )}
         </div>
+
+        {showUploadModal && (
+            <div className='upload-modal-overlay' onClick={closeUploadModal}>
+                <div className='upload-modal' onClick={(e) => e.stopPropagation()}>
+                    <button className='upload-modal-close' onClick={closeUploadModal}>X</button>
+
+                    <h2>Add a photo</h2>
+                    <p className='upload-modal-subtitle'>Share something you've made or found</p>
+
+                    <label
+                        className={`dropzone ${isDragging ? 'dragging' : ''} ${selectedImage ? 'has-image' : ''}`}
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                    >
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => setSelectedImage(e.target.files[0])}
+                            hidden
+                        />
+                        {selectedImage ? (
+                            <img
+                                className='dropzone-preview'
+                                src={URL.createObjectURL(selectedImage)}
+                                alt="Preview"
+                            />
+                        ) : (
+                            <div className='dropzone-placeholder'>
+                                <span className='dropzone-icon'>&#8593;</span>
+                                <p>Drag an image here</p>
+                                <span>or click to browse</span>
+                            </div>
+                        )}
+                    </label>
+
+                    <div className='upload-modal-fields'>
+                        <input
+                            type="text"
+                            placeholder="Image title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Author name"
+                            value={author}
+                            onChange={(e) => setAuthor(e.target.value)}
+                        />
+                        <select
+                            value={uploadcategory}
+                            onChange={(e) => setUploadcategory(e.target.value)}
+                        >
+                            <option value="">Select Category</option>
+                            <option value="Nature">Nature</option>
+                            <option value="People">People</option>
+                            <option value="Animal">Animal</option>
+                            <option value="Building">Building</option>
+                        </select>
+                    </div>
+
+                    <button className='upload-modal-submit' onClick={handleUpload}>
+                        Post Photo
+                    </button>
+                </div>
+            </div>
+        )}
     </div>
     )
 }
