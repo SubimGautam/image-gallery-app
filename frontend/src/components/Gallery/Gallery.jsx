@@ -54,6 +54,7 @@ const Gallery = () => {
         formdata.append('author', author);
         formdata.append('category', category);
         formdata.append('uploadcategory', uploadcategory);
+        formdata.append('visibility', visibility);
         try{
             const token = localStorage.getItem('token')
             const response = await fetch('http://localhost:5000/api/images', {
@@ -88,7 +89,9 @@ const Gallery = () => {
         seteditingImage(image);
         setTitle(image.title);
         setAuthor(image.author);
+        setVisibility('private');
         setUploadcategory(image.uploadcategory);
+        setVisibility(image.visibility || 'private')
         console.log('editingImage should now be:', image);
     }
 
@@ -187,6 +190,7 @@ const Gallery = () => {
         setTitle('');
         setAuthor('');
         setUploadcategory('');
+        setVisibility('private');
     };
 
     const filterImages = images.filter((image) =>
@@ -333,6 +337,28 @@ const Gallery = () => {
                             <option value="Animal">Animal</option>
                             <option value="Building">Building</option>
                         </select>
+                        <div className='visibility-toggle'>
+                            <label>
+                                <input 
+                                    type='radio'
+                                    name='visibility'
+                                    value='private'
+                                    checked = {visibility === 'private'}
+                                    onChange={(e) => setVisibility(e.target.value)}
+                                />
+                                Private
+                            </label>
+                            <label>
+                                <input 
+                                    type='radio'
+                                    name='visibility'
+                                    value='public'
+                                    checked = {visibility === 'public'}
+                                    onChange={(e) => setVisibility(e.target.value)}
+                                />    
+                                Public
+                            </label>    
+                        </div>
                     </div>
 
                     <button className='upload-modal-submit' onClick={handleUpload}>
@@ -380,6 +406,29 @@ const Gallery = () => {
                     <option value="Animal">Animal</option>
                     <option value="Building">Building</option>
                 </select>
+
+                <div className='visibility-toggle'>
+                    <label>
+                        <input 
+                            type='radio'
+                            name='visibility'
+                            value='private'
+                            checked = {visibility === 'private'}
+                            onChange={(e) => setVisibility(e.target.value)}
+                        />
+                        Private
+                    </label>
+                    <label>
+                        <input 
+                            type='radio'
+                            name='visibility'
+                            value='public'
+                            checked = {visibility === 'public'}
+                            onChange={(e) => setVisibility(e.target.value)}
+                        />    
+                        Public
+                    </label>    
+                </div>
             </div>
 
             <button className='upload-modal-submit' onClick={handleUpdate}>
