@@ -128,20 +128,36 @@ const Gallery = () => {
         ));
 
         seteditingImage(null);
+        setTitle('');
+        setAuthor('');
+        setUploadcategory('');
 
     } catch (error) {
         console.log(error);
     }
 };
 
+    const closeEditModal = () => {
+        seteditingImage(null);
+        setTitle('');
+        setAuthor('');
+        setUploadcategory('');
+    }
 
     const handleDelete = async (id) => {
         try{
+            const token = localStorage.getItem('token');
             const response = await fetch(`http://localhost:5000/api/images/${id}`, {
-                method: 'Delete'
+                method: 'Delete',
+                headers: {
+                    Authorization: 'Bearer${token}'
+                }
             });
             const data = await response.json();
             console.log(data)
+            if(response.ok){
+            setImages(images.filter((image) => image._id !== id));
+            }
         }catch(error){
             console.log(error);
         }
@@ -200,46 +216,6 @@ const Gallery = () => {
         </header>
 
         <div className='gallery-toolbar'>
-            {editingImage && (
-    <div className="edit-form">
-
-        <h2>Edit Image</h2>
-
-        <input
-            type="text"
-            placeholder="Image title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-        />
-
-        <input
-            type="text"
-            placeholder="Author name"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-        />
-
-        <select
-            value={uploadcategory}
-            onChange={(e) => setUploadcategory(e.target.value)}
-        >
-            <option value="">Select Category</option>
-            <option value="Nature">Nature</option>
-            <option value="People">People</option>
-            <option value="Animal">Animal</option>
-            <option value="Building">Building</option>
-        </select>
-
-        <button onClick={handleUpdate}>
-            Update
-        </button>
-
-        <button onClick={() => seteditingImage(null)}>
-            Cancel
-        </button>
-
-    </div>
-)}
 
             <div className='filters'>
                 <button className={category === 'All' ? 'active' : ''} onClick={() => setCategory('All')}>All</button>
@@ -363,7 +339,54 @@ const Gallery = () => {
                     </button>
                 </div>
             </div>
+            
         )}
+        {editingImage && (
+    <div className='upload-modal-overlay' onClick={closeEditModal}>
+        <div className='upload-modal' onClick={(e) => e.stopPropagation()}>
+            <button className='upload-modal-close' onClick={closeEditModal}>X</button>
+
+            <h2>Edit photo</h2>
+            <p className='upload-modal-subtitle'>Update the details for this image</p>
+
+            <div className='edit-modal-preview'>
+                <img
+                    src={`http://localhost:5000${editingImage.imageUrl}`}
+                    alt={editingImage.author}
+                />
+            </div>
+
+            <div className='upload-modal-fields'>
+                <input
+                    type="text"
+                    placeholder="Image title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Author name"
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                />
+                <select
+                    value={uploadcategory}
+                    onChange={(e) => setUploadcategory(e.target.value)}
+                >
+                    <option value="">Select Category</option>
+                    <option value="Nature">Nature</option>
+                    <option value="People">People</option>
+                    <option value="Animal">Animal</option>
+                    <option value="Building">Building</option>
+                </select>
+            </div>
+
+            <button className='upload-modal-submit' onClick={handleUpdate}>
+                Save Changes
+            </button>
+        </div>
+    </div>
+)}
     </div>
     )
 }

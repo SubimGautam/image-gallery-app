@@ -55,7 +55,6 @@ async function startServer() {
         })
         app.get('/api/images', authMiddleware ,async(req,res)=> {
             try{
-                console.log("Logged in user: ", req.userId)
                 const images = await imagesCollection.find({userId: req.userId}).toArray();
                 console.log("Images for the user", images)
 
@@ -68,7 +67,7 @@ async function startServer() {
             };
         });
 
-        app.delete('/api/images/:id', async (req, res) => {
+        app.delete('/api/images/:id',authMiddleware, async (req, res) => {
             try{
                 const id = req.params.id;
                 const image = await imagesCollection.findOne({
@@ -77,6 +76,11 @@ async function startServer() {
                 if (!image) {
                     return res.status(404).json({
                         message: 'Image not found'
+                    });
+                }
+                if (image.userId !== req.userId){
+                    return res.status(401).json({
+                        message : 'You are not allowed to delete this image'
                     });
                 }
                 const result = await imagesCollection.deleteOne({
