@@ -67,6 +67,19 @@ async function startServer() {
             };
         });
 
+        app.get('/api/images/public', authMiddleware, async(req, res) => {
+            try{
+                const images = await imagesCollection.find({visibility: 'public'}).toArray();
+                console.log("Public images: ", images)
+                res.json(images);
+            } catch(error){
+                console.log(error);
+                res.status(500).json({
+                    message: 'Failed to get public images'
+                });
+            };
+        });
+
         app.delete('/api/images/:id',authMiddleware, async (req, res) => {
             try{
                 const id = req.params.id;
@@ -211,6 +224,7 @@ async function startServer() {
             uploadcategory: req.body.uploadcategory,
             userId: req.userId, 
             imageUrl: `/uploads/${req.file.filename}`,
+            visibility: req.body.visibility || 'private',
 
         };
 
@@ -231,7 +245,7 @@ async function startServer() {
     app.put('/api/images/:id',authMiddleware, async (req, res) => {
     try {
         const id = req.params.id;
-        const { title, author, uploadcategory } = req.body;
+        const { title, author, uploadcategory, visibility} = req.body;
 
         const image = await imagesCollection.findOne({
             _id: new ObjectId(id)
@@ -255,7 +269,8 @@ async function startServer() {
                 $set: {
                     title: title,
                     author: author,
-                    uploadcategory: uploadcategory
+                    uploadcategory: uploadcategory,
+                    visibility: visibility
                 }
             }
         );

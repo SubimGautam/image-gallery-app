@@ -14,6 +14,7 @@ const Gallery = () => {
     const [editingImage, seteditingImage] = useState(null);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [visibility, setVisibility] = useState('private');
     const navigate = useNavigate();
     useEffect(() => {
     const getImages = async () => {
