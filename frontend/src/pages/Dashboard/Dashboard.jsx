@@ -1,32 +1,48 @@
 import React, { useEffect, useState } from 'react';
-
+import '../../components/Gallery/Gallery.css';
 const Dashboard = () => {
 
-    const [totalImages, setTotalImages] = useState(0);
-    useEffect(() => {  // Run this code when the Dashboard component loads.
-        const getDashboardData = async () => { // here we are creating a function called getDashboardData
+    const [publicImages, setPublicImages] = useState([]);
+    useEffect(() => {
+        const getPublicImages = async () => {
             try{
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:5000/api/dashboard',{
+                const response = await fetch('http://localhost:5000/api/images/public', {
                     headers: {
-                        Authorization: `Bearer ${token}` // Bearer tells the server this value is an authentication server
+                        Authorization: `Bearer ${token}`
                     }
-                }); // This is where React communicates with Express.
-                const data = await response.json(); // React receives the response
-                setTotalImages(data.totalImages)
-            }catch (error){
-            console.log(error);
+                });
+                const data = await response.json();
+                console.log('Public Images: ', data);
+                setPublicImages(data);
+            } catch (error){
+                console.log(error);
             }
         };
-        getDashboardData(); // Get dashboard information from our backend.                                                                                                                             
+        getPublicImages();
     },[]);
+    return(
+    <div>
+        <h1>Welcome to dashboard</h1>
 
-    return (
-        <div>
-            <h1>Dashboard</h1>
-            <p>Welcome to Dashboard</p>
+        <div className='gallery-images'>
+            {publicImages.map((image) => (
+                <div className='image-card' key={image._id}>
+                    <div className='image-frame'> 
+                        <img 
+                            src={`http://localhost:5000${image.imageUrl}`}
+                            alt={image.author}
+                        />
+                    </div>
+                    <div className='image-info'> 
+                        <h3>{image.title || 'Untitled'}</h3>
+                        <p>{image.author || 'Unknown'}</p>
+                    </div>
+                </div>
+            ))}
         </div>
+    </div>
     );
-};
+}
 
 export default Dashboard;

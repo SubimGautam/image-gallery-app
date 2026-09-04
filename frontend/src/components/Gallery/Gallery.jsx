@@ -107,7 +107,8 @@ const Gallery = () => {
             body: JSON.stringify({
                 title: title,
                 author: author,
-                uploadcategory: uploadcategory
+                uploadcategory: uploadcategory,
+                visibility: visibility
             })
         });
 
@@ -126,7 +127,8 @@ const Gallery = () => {
                     ...image,
                     title: title,
                     author: author,
-                    uploadcategory: uploadcategory
+                    uploadcategory: uploadcategory,
+                    visibility: visibility
                 }
                 : image
         ));
@@ -411,7 +413,7 @@ const Gallery = () => {
                     <label>
                         <input 
                             type='radio'
-                            name='visibility'
+                            name='edit-visibility'
                             value='private'
                             checked = {visibility === 'private'}
                             onChange={(e) => setVisibility(e.target.value)}
@@ -421,7 +423,7 @@ const Gallery = () => {
                     <label>
                         <input 
                             type='radio'
-                            name='visibility'
+                            name='edit-visibility'
                             value='public'
                             checked = {visibility === 'public'}
                             onChange={(e) => setVisibility(e.target.value)}
