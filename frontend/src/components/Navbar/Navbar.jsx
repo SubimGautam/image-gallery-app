@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchBar from '../SearchBar/SearchBar';
+import Logo from '../../assets/logo.png';
 import './Navbar.css';
 
 const Navbar = ({ search, onSearchChange }) => {
@@ -8,7 +9,6 @@ const Navbar = ({ search, onSearchChange }) => {
 
     return (
         <header className='navbar'>
-            <div className='navbar-logo'>PIX</div>
 
             <SearchBar value={search} onChange={onSearchChange} />
 

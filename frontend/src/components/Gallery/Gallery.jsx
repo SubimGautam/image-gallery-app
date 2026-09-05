@@ -6,6 +6,7 @@ import Filters from '../../components/Filters/Filters';
 import ImageCard from '../../components/ImageCard/ImageCard';
 import Navbar from '../../components/Navbar/Navbar';
 import UploadModal from '../../components/UploadModal/UploadModal';
+import Sidebar from '../../components/Sidebar/Sidebar';
 const Gallery = () => {
     const [images,setImages] = useState([]);
     const [search, setSearch] = useState('');
@@ -175,6 +176,8 @@ const Gallery = () => {
     );
 
     return (
+    <div className='gallery-layout'>
+        <Sidebar />
     <div className='album'>
         <Navbar search={search} onSearchChange={setSearch} />
 
@@ -194,8 +197,8 @@ const Gallery = () => {
                     key={image._id}
                     image={image}
                     onPreview={setPreviewImage}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
+                    handleEdit={handleEdit}
+                    handleDelete={handleDelete}
                     />
                 ))}
 
@@ -276,6 +279,7 @@ const Gallery = () => {
         </div>
     </div>
 )}
+    </div>
     </div>
     )
 }

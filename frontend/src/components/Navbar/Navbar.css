@@ -8,11 +8,15 @@
 }
 
 .navbar-logo {
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    color: #111;
+    display: flex;
+    align-items: center;
     flex-shrink: 0;
+}
+
+.navbar-logo img {
+    height: 28px;
+    width: auto;
+    display: block;
 }
 
 .navbar-actions {
