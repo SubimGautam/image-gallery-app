@@ -1,0 +1,151 @@
+.upload-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 15, 15, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1200;
+    padding: 20px;
+}
+
+.upload-modal {
+    position: relative;
+    background: #fff;
+    width: 100%;
+    max-width: 460px;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.upload-modal h2 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111;
+}
+
+.upload-modal-subtitle {
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: #888;
+}
+
+.upload-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: #f2f2f2;
+    color: #333;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+}
+
+.upload-modal-close:hover {
+    background: #e8e8e8;
+}
+
+.dropzone {
+    display: block;
+    border: 2px dashed #ddd;
+    border-radius: 14px;
+    background: #fafafa;
+    cursor: pointer;
+    transition: 0.2s ease;
+    margin-bottom: 18px;
+    overflow: hidden;
+}
+
+.dropzone.dragging {
+    border-color: #111;
+    background: #f2f2f2;
+}
+
+.dropzone.has-image {
+    border: none;
+    padding: 0;
+}
+
+.dropzone-placeholder {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.dropzone-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #eee;
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.dropzone-placeholder p {
+    margin: 0 0 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.dropzone-placeholder span {
+    font-size: 12px;
+    color: #999;
+}
+
+.dropzone-preview {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+.upload-modal-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.upload-modal-fields input,
+.upload-modal-fields select {
+    padding: 12px 14px;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: #111;
+}
+
+.upload-modal-fields input:focus,
+.upload-modal-fields select:focus {
+    border-color: #111;
+}
+
+.upload-modal-submit {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    background: #111;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.upload-modal-submit:hover {
+    background: #333;
+}

@@ -1,0 +1,72 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 40px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.navbar-logo {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #111;
+    flex-shrink: 0;
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.navbar-link {
+    border: none;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    padding: 8px 4px;
+}
+
+.navbar-link:hover {
+    color: #111;
+}
+
+.navbar-login {
+    padding: 9px 20px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    background: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.navbar-login:hover {
+    border-color: #111;
+}
+
+.navbar-submit {
+    padding: 9px 20px;
+    border: none;
+    border-radius: 20px;
+    background: #111;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.navbar-submit:hover {
+    background: #333;
+}
