@@ -64,6 +64,7 @@ const Dashboard = () => {
                         key={image._id}
                         image={image}
                         onPreview={setPreviewImage}
+                        showDownload={true}
                     />
                 ))}
             </div>

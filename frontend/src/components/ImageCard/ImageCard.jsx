@@ -1,7 +1,7 @@
 import React from 'react';
 import './ImageCard.css';
 
-const ImageCard = ({ image, onPreview, handleDelete, handleEdit }) => {
+const ImageCard = ({ image, onPreview, handleDelete, handleEdit, showDownload }) => {
     return (
         <div className='image-card'>
             <div className='image-frame'>
@@ -25,6 +25,16 @@ const ImageCard = ({ image, onPreview, handleDelete, handleEdit }) => {
                     <button onClick={() => handleDelete(image._id)}>
                         Delete
                     </button>
+                )}
+
+                {showDownload && (
+                    <a
+                        href={`http://localhost:5000${image.imageUrl}`}
+                        download
+                        className='download-btn'
+                    >
+                        Download
+                    </a>
                 )}
             </div>
         </div>
