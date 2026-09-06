@@ -7,17 +7,14 @@ import ImageCard from '../../components/ImageCard/ImageCard';
 import Navbar from '../../components/Navbar/Navbar';
 import UploadModal from '../../components/UploadModal/UploadModal';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import EditModal from '../../components/EditModal/EditModal';
 const Gallery = () => {
     const [images,setImages] = useState([]);
     const [search, setSearch] = useState('');
-    const [title, setTitle] = useState('');
-    const [author, setAuthor] = useState('');
     const [category, setCategory] = useState('All');
-    const [uploadcategory, setUploadcategory] = useState('');
     const [previewImage, setPreviewImage] = useState('');
     const [editingImage, seteditingImage] = useState(null);
     const [showUploadModal, setShowUploadModal] = useState(false);
-    const [visibility, setVisibility] = useState('private');
     const navigate = useNavigate();
     useEffect(() => {
     const getImages = async () => {
@@ -85,70 +82,44 @@ const Gallery = () => {
 };
 
     const handleEdit = (image) => {
-        console.log('Edit Clicked');
-        console.log(image);
         seteditingImage(image);
-        setTitle(image.title);
-        setAuthor(image.author);
-        setVisibility('private');
-        setUploadcategory(image.uploadcategory);
-        setVisibility(image.visibility || 'private')
-        console.log('editingImage should now be:', image);
     }
 
-    const handleUpdate = async () => {
+    const handleUpdate = async (id, fields) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/images/${editingImage._id}`, {
+        const response = await fetch(`http://localhost:5000/api/images/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({
-                title: title,
-                author: author,
-                uploadcategory: uploadcategory,
-                visibility: visibility
-            })
+            body: JSON.stringify(fields)
         });
 
         const data = await response.json();
 
-        console.log(data);
-
         if(!response.ok) {
             console.log('Update Failed', data);
-            return;
+            return false;
         }
 
         setImages(images.map((image) =>
-            image._id === editingImage._id
-                ? {
-                    ...image,
-                    title: title,
-                    author: author,
-                    uploadcategory: uploadcategory,
-                    visibility: visibility
-                }
+            image._id === id
+                ? { ...image, ...fields }
                 : image
         ));
 
-        seteditingImage(null);
-        setTitle('');
-        setAuthor('');
-        setUploadcategory('');
+        return true;
 
     } catch (error) {
         console.log(error);
+        return false;
     }
 };
 
     const closeEditModal = () => {
         seteditingImage(null);
-        setTitle('');
-        setAuthor('');
-        setUploadcategory('');
     }
 
     const handleDelete = async (id) => {
@@ -210,75 +181,11 @@ const Gallery = () => {
             onClose={() => setShowUploadModal(false)}
             onSubmit={handleUpload}
         />
-        {editingImage && (
-    <div className='upload-modal-overlay' onClick={closeEditModal}>
-        <div className='upload-modal' onClick={(e) => e.stopPropagation()}>
-            <button className='upload-modal-close' onClick={closeEditModal}>X</button>
-
-            <h2>Edit photo</h2>
-            <p className='upload-modal-subtitle'>Update the details for this image</p>
-
-            <div className='edit-modal-preview'>
-                <img
-                    src={`http://localhost:5000${editingImage.imageUrl}`}
-                    alt={editingImage.author}
-                />
-            </div>
-
-            <div className='upload-modal-fields'>
-                <input
-                    type="text"
-                    placeholder="Image title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="Author name"
-                    value={author}
-                    onChange={(e) => setAuthor(e.target.value)}
-                />
-                <select
-                    value={uploadcategory}
-                    onChange={(e) => setUploadcategory(e.target.value)}
-                >
-                    <option value="">Select Category</option>
-                    <option value="Nature">Nature</option>
-                    <option value="People">People</option>
-                    <option value="Animal">Animal</option>
-                    <option value="Building">Building</option>
-                </select>
-
-                <div className='visibility-toggle'>
-                    <label>
-                        <input 
-                            type='radio'
-                            name='edit-visibility'
-                            value='private'
-                            checked = {visibility === 'private'}
-                            onChange={(e) => setVisibility(e.target.value)}
-                        />
-                        Private
-                    </label>
-                    <label>
-                        <input 
-                            type='radio'
-                            name='edit-visibility'
-                            value='public'
-                            checked = {visibility === 'public'}
-                            onChange={(e) => setVisibility(e.target.value)}
-                        />    
-                        Public
-                    </label>    
-                </div>
-            </div>
-
-            <button className='upload-modal-submit' onClick={handleUpdate}>
-                Save Changes
-            </button>
-        </div>
-    </div>
-)}
+        <EditModal
+            image={editingImage}
+            onClose={closeEditModal}
+            onSubmit={handleUpdate}
+        />
     </div>
     </div>
     )

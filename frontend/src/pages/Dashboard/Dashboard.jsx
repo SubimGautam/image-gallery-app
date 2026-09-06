@@ -5,6 +5,7 @@ import PreviewModal from '../../components/PreviewModal/PreviewModal';
 import Filters from '../../components/Filters/Filters';
 import ImageCard from '../../components/ImageCard/ImageCard';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import SearchBar from '../../components/SearchBar/SearchBar';
 const Dashboard = () => {
 
     const [publicImages, setPublicImages] = useState([]);
@@ -12,6 +13,7 @@ const Dashboard = () => {
     const [category, setCategory] = useState('All');
     const [sidebarOpen, setSideBarOpen] = useState(false);
     const navigate = useNavigate();
+    const [search, setSearch] = useState('');
 
     useEffect(() => {
         const getPublicImages = async () => {
@@ -41,7 +43,8 @@ const Dashboard = () => {
     },[]);
 
     const filterImages = publicImages.filter((image) =>
-        category === 'All' || image.uploadcategory === category
+        (image.author || '').toLowerCase().includes(search.toLowerCase()) &&
+        (category === 'All' || image.uploadcategory === category)
     );
 
     return(
@@ -52,7 +55,7 @@ const Dashboard = () => {
 
         <div className='dashboard-main'>
             
-
+            <SearchBar value={search} onChange={setSearch} />
             <Filters category={category} onCategoryChange={setCategory} />
 
             <div className='gallery-images'>
