@@ -5,7 +5,7 @@ import PreviewModal from '../../components/PreviewModal/PreviewModal';
 import Filters from '../../components/Filters/Filters';
 import ImageCard from '../../components/ImageCard/ImageCard';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import SearchBar from '../../components/SearchBar/SearchBar';
+import Navbar from '../../components/Navbar/Navbar'
 const Dashboard = () => {
 
     const [publicImages, setPublicImages] = useState([]);
@@ -77,8 +77,7 @@ const Dashboard = () => {
         <Sidebar />
 
         <div className='dashboard-main'>
-            
-            <SearchBar value={search} onChange={setSearch} />
+            <Navbar search={search} onSearchChange={setSearch} />
             <Filters category={category} onCategoryChange={setCategory} />
 
             <div className='gallery-images'>
