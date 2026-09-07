@@ -67,6 +67,63 @@ async function startServer() {
             };
         });
 
+        app.get('/api/users/:id/follow', authMiddleware, async(req, res) => {
+            try{
+                const targetId = req.params.id;
+
+                if(targetId === req.params.id){
+                    return res.status(400).json({
+                        message: 'You cannot follow Yourself'
+                    });
+                }
+                await usersCollection.updateOne(
+                    { _id: new ObjectId(targetId)},
+                    { $addToSet: {followers: req.userId}}
+                );
+
+                await usersCollection.updateOne(
+                    { _id: new ObjectId(req.userId) },
+                    { $addToSet: { following: targetId } }
+                );
+
+                res.json({message: 'Followed successfully'});
+            } catch(error) {
+                console.log(error)
+                res.status(500).json({
+                    message: 'Failed to follow user'
+                });
+            }
+        });
+
+        app.post('/api/users/:id/unfollow', authMiddleware, async (req, res) => {
+            try{
+                const targetId = req.params.id;
+
+                if(targetId === req.userId){
+                    return res.status(400).json({
+                        message: 'You cannot unfollow yourself'
+                    });
+                }
+
+                await usersCollection.updateOne(
+                    { _id: new ObjectId(targetId) },
+                    { $pull: { followers: req.userId } }
+                );
+
+                await usersCollection.updateOne(
+                    { _id: new ObjectId(req.userId) },
+                    { $pull: { following: targetId } }
+                );
+
+                res.json({ message: 'Unfollowed successfully' });
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    message: 'Failed to unfollow user'
+                });
+            }
+        });
+
         app.get('/api/images/public', authMiddleware, async(req, res) => {
             try{
                 const images = await imagesCollection.find({visibility: 'public'}).toArray();
