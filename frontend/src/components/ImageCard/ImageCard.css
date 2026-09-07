@@ -81,3 +81,27 @@
     background: #3b82f6;
     color: #fff;
 }
+.image-info .save-btn {
+    padding: 7px 14px;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    background: #fff;
+    color: #444;
+    transition: 0.2s ease;
+}
+
+.image-info .save-btn:hover {
+    border-color: #111;
+    color: #111;
+}
+
+.image-info .save-btn.saved {
+    background: #111;
+    border-color: #111;
+    color: #fff;
+}

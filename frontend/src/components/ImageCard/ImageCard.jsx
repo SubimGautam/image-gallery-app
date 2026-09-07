@@ -1,7 +1,7 @@
 import React from 'react';
 import './ImageCard.css';
 
-const ImageCard = ({ image, onPreview, handleDelete, handleEdit, showDownload }) => {
+const ImageCard = ({ image, onPreview, handleDelete, handleEdit, showDownload, onSave, isSaved }) => {
     const handleDownload = async (image) => {
     const confirmed = window.confirm('Are you sure you want to download this image?');
     if (!confirmed) return;
@@ -53,6 +53,15 @@ const ImageCard = ({ image, onPreview, handleDelete, handleEdit, showDownload })
                         Download
                     </button>
                 )}
+                {onSave && (
+                    <button
+                        className={isSaved ? 'save-btn saved' : 'save-btn'}
+                        onClick={() => onSave(image)}
+                    >
+                        {isSaved ? 'Saved' : 'Save'}
+                    </button>
+                )}
+
             </div>
         </div>
     );

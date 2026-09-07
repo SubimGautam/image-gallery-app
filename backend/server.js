@@ -67,11 +67,11 @@ async function startServer() {
             };
         });
 
-        app.get('/api/users/:id/follow', authMiddleware, async(req, res) => {
+        app.post('/api/users/:id/follow', authMiddleware, async(req, res) => {
             try{
                 const targetId = req.params.id;
 
-                if(targetId === req.params.id){
+                if(targetId === req.userId){
                     return res.status(400).json({
                         message: 'You cannot follow Yourself'
                     });
@@ -123,6 +123,136 @@ async function startServer() {
                 });
             }
         });
+
+        app.post('/api/images/:id/save', authMiddleware, async (req, res) => {
+            try{
+                const imageId = req.params.id;
+
+                const image = await imagesCollection.findOne({
+                    _id: new ObjectId(imageId)
+                });
+
+                if(!image){
+                    return res.status(404).json({
+                        message: 'Image not found'
+                    });
+                }
+
+                await usersCollection.updateOne(
+                    { _id: new ObjectId(req.userId) },
+                    { $addToSet: { savedImages: imageId } }
+                );
+
+                res.json({ message: 'Image saved successfully' });
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    message: 'Failed to save image'
+                });
+            }
+        });
+
+        app.post('/api/images/:id/unsave', authMiddleware, async (req, res) => {
+            try{
+                const imageId = req.params.id;
+
+                await usersCollection.updateOne(
+                    { _id: new ObjectId(req.userId) },
+                    { $pull: { savedImages: imageId } }
+                );
+
+                res.json({ message: 'Image unsaved successfully' });
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    message: 'Failed to unsave image'
+                });
+            }
+        });
+
+        app.get('/api/users/:id/saved-images', authMiddleware, async (req, res) => {
+            try{
+                const targetId = req.params.id;
+
+                if(targetId !== req.userId){
+                    return res.status(401).json({
+                        message: 'You can only view your own saved images'
+                    });
+                }
+
+                const user = await usersCollection.findOne({
+                    _id: new ObjectId(req.userId)
+                });
+
+                const savedIds = user.savedImages || [];
+                const objectIds = savedIds.map((id) => new ObjectId(id));
+
+                const images = await imagesCollection.find({
+                    _id: { $in: objectIds }
+                }).toArray();
+
+                res.json(images);
+
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    message: 'Failed to get saved images'
+                });
+            }
+        });
+
+        app.get('/api/users/:id', authMiddleware, async(req, res) => {
+            try{
+                const targetId = req.params.id;
+                const user = await usersCollection.findOne({
+                    _id: new ObjectId(targetId)
+                });
+
+                if(!user){
+                    return res.status(404).json({
+                        message: 'User not found'
+                    });
+                }
+                const followers = user.followers || [];
+                const following = user.following || [];
+
+                res.json({
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    followerCount: followers.length,
+                    followingCount: following.count,
+                    isFollowing: followers.includes(req.userId),
+                    isOwnProfile: targetId === req.userId
+                });
+
+            } catch (error){
+                console.log(error)
+                res.status(500).json({
+                    message: 'Failed to get user profile'
+                });
+            }
+        });
+
+        app.get('/api/users/:id/images', authMiddleware, async (req, res) => {
+            try{
+                const targetId = req.params.id;
+                let images;
+
+            if(targetId === req.userId){
+                images = await imagesCollection.find({ userId: targetId }).toArray();
+            } else {
+                images = await imagesCollection.find({ userId: targetId, visibility: 'public' }).toArray();
+            }
+
+                res.json(images);
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                message: 'Failed to get user images'
+                    });
+                }
+            });
 
         app.get('/api/images/public', authMiddleware, async(req, res) => {
             try{

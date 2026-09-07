@@ -14,7 +14,7 @@ const Dashboard = () => {
     const [sidebarOpen, setSideBarOpen] = useState(false);
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
-
+    const [savedIds, setSavedIds] = useState([]);
     useEffect(() => {
         const getPublicImages = async () => {
             try{
@@ -42,6 +42,29 @@ const Dashboard = () => {
         getPublicImages();
     },[]);
 
+    const handleSaveToggle = async (image) => {
+    const token = localStorage.getItem('token');
+    const isCurrentlySaved = savedIds.includes(image._id);
+    const action = isCurrentlySaved ? 'unsave' : 'save';
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/images/${image._id}/${action}`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            if (isCurrentlySaved) {
+                setSavedIds(savedIds.filter((id) => id !== image._id));
+            } else {
+                setSavedIds([...savedIds, image._id]);
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
     const filterImages = publicImages.filter((image) =>
         (image.author || '').toLowerCase().includes(search.toLowerCase()) &&
         (category === 'All' || image.uploadcategory === category)
@@ -65,6 +88,8 @@ const Dashboard = () => {
                         image={image}
                         onPreview={setPreviewImage}
                         showDownload={true}
+                        onSave={handleSaveToggle}
+                        isSaved={savedIds.includes(image._id)}
                     />
                 ))}
             </div>
@@ -72,6 +97,7 @@ const Dashboard = () => {
             <PreviewModal image={previewImage} onClose={() => setPreviewImage(null)} />
         </div>
     </div>
+    
 
     );
 }
