@@ -51,3 +51,13 @@
     font-weight: 700;
     font-family: 'Inter', sans-serif;
 }
+
+.preview-author-link {
+    cursor: pointer;
+    font-weight: 600;
+    color: #111;
+}
+
+.preview-author-link:hover {
+    text-decoration: underline;
+}

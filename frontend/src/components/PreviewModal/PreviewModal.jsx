@@ -1,7 +1,9 @@
 import React from 'react';
 import './PreviewModal.css';
+import { useNavigate } from 'react-router-dom';
 
 const PreviewModal = ({ image, onClose }) => {
+    const navigate = useNavigate();
     if (!image) return null;
 
     return (
@@ -15,7 +17,18 @@ const PreviewModal = ({ image, onClose }) => {
                     alt={image.author}
                 />
                 <h2>{image.title}</h2>
-                <p>Author: {image.author}</p>
+                <p>
+                    Author:{' '}
+                    <span
+                        className='preview-author-link'
+                        onClick={() => {
+                            onClose();
+                            navigate(`/profile/${image.userId}`);
+                        }}
+                    >
+                        {image.author}
+                    </span>
+                </p>
                 <p>Category: {image.uploadcategory}</p>
             </div>
         </div>

@@ -201,6 +201,33 @@ async function startServer() {
             }
         });
 
+        app.get('/api/users/search', authMiddleware, async (req, res) => {
+    try{
+        const query = req.query.q || '';
+
+        if(query.trim() === ''){
+            return res.json([]);
+        }
+
+        const users = await usersCollection.find({
+            name: { $regex: query, $options: 'i' }
+        }).limit(10).toArray();
+
+        const results = users.map((user) => ({
+            id: user._id,
+            name: user.name
+        }));
+
+        res.json(results);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'Failed to search users'
+        });
+    }
+});
+
         app.get('/api/users/:id', authMiddleware, async(req, res) => {
             try{
                 const targetId = req.params.id;
@@ -220,6 +247,7 @@ async function startServer() {
                     id: user._id,
                     name: user.name,
                     email: user.email,
+                    profilePicture: user.profilePicture || null,
                     followerCount: followers.length,
                     followingCount: following.count,
                     isFollowing: followers.includes(req.userId),
@@ -253,6 +281,7 @@ async function startServer() {
                     });
                 }
             });
+
 
         app.get('/api/images/public', authMiddleware, async(req, res) => {
             try{
@@ -346,6 +375,41 @@ async function startServer() {
     }
 });
 
+        app.post('/api/users/:id/avatar', authMiddleware, upload.single('avatar'), async (req, res) => {
+            try{
+                const targetId = req.params.id;
+
+                if(targetId !== req.userId){
+                    return res.status(401).json({
+                        message: 'You can only update your own profile picture'
+                    });
+                }
+
+                if(!req.file){
+                    return res.status(400).json({
+                        message: 'No image uploaded'
+                    });
+                }
+
+                const profilePicture = `/uploads/${req.file.filename}`;
+
+                await usersCollection.updateOne(
+                    { _id: new ObjectId(req.userId) },
+                    { $set: { profilePicture: profilePicture } }
+                );
+
+                res.json({
+                    message: 'Profile picture updated successfully',
+                    profilePicture: profilePicture
+                });
+
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    message: 'Failed to update profile picture'
+                });
+            }
+        });
 
         app.post('/api/login', async (req, res) => {
             try{
@@ -412,6 +476,7 @@ async function startServer() {
             userId: req.userId, 
             imageUrl: `/uploads/${req.file.filename}`,
             visibility: req.body.visibility || 'private',
+
 
         };
 

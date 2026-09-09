@@ -77,7 +77,7 @@ const Dashboard = () => {
         <Sidebar />
 
         <div className='dashboard-main'>
-            <Navbar search={search} onSearchChange={setSearch} />
+            <Navbar search={search} onSearchChange={setSearch} searchUsers={true} />
             <Filters category={category} onCategoryChange={setCategory} />
 
             <div className='gallery-images'>

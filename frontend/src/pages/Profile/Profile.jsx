@@ -86,6 +86,33 @@ const Profile = () => {
         }
     };
 
+    const handleAvatarUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formdata = new FormData();
+        formdata.append('avatar', file);
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:5000/api/users/${id}/avatar`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}` },
+                body: formdata
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setProfile({ ...profile, profilePicture: data.profilePicture });
+            } else {
+                console.log('Avatar upload failed:', data.message);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     if (!profile) return null;
 
     return (
@@ -94,9 +121,25 @@ const Profile = () => {
 
             <div className='profile-main'>
                 <div className='profile-header'>
-                    <div className='profile-avatar'>
-                        {profile.name ? profile.name.charAt(0).toUpperCase() : '?'}
-                    </div>
+                    <label className='profile-avatar'>
+                            {profile.profilePicture ? (
+                                <img
+                                    src={`http://localhost:5000${profile.profilePicture}`}
+                                    alt={profile.name}
+                                />
+                            ) : (
+                                profile.name ? profile.name.charAt(0).toUpperCase() : '?'
+                            )}
+
+                            {profile.isOwnProfile && (
+                                <input
+                                    type='file'
+                                    accept='image/*'
+                                    onChange={handleAvatarUpload}
+                                    hidden
+                                />
+                            )}
+                        </label>
 
                     <div className='profile-details'>
                         <h1>{profile.name}</h1>
