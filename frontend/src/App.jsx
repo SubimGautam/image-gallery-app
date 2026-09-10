@@ -6,6 +6,7 @@ import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Profile from './pages/Profile/Profile';
 import Chat from './pages/Chat/Chat';
+import Landing from './pages/Landing/Landing';
 import Inbox from './pages/Inbox/Inbox';
 
 function App() {
@@ -13,8 +14,9 @@ function App() {
         <Routes>
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/messages/:userId" element={<Chat />} />
             <Route path="/messages" element={<Inbox />} />
+            <Route path="/messages/:userId" element={<Inbox />} />  
+            <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile/:id" element={<Profile />} />
