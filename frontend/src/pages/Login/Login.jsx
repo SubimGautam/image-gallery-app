@@ -32,7 +32,7 @@ const Login = () => {
                     'user',
                     JSON.stringify(data.user)
                 );
-                navigate('/');
+                navigate('/gallery');
             }
         } catch (error) {
             console.log(error);

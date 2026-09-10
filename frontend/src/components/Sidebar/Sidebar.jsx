@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Logo from '../../assets/logo.png';
 import HomeIcon from '../../assets/home.png';
 import GalleryIcon from '../../assets/gallery.png';
+import MessageIcon from '../../assets/message.png';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -15,13 +16,16 @@ const Sidebar = () => {
             </div>
 
             <nav className='sidebar-nav'>
-            <button className='sidebar-link' onClick={() => navigate('/dashboard')}>
-                <img src={HomeIcon} alt="Home" />
-            </button>
-            <button className='sidebar-link' onClick={() => navigate('/')}>
+                <button className='sidebar-link' onClick={() => navigate('/dashboard')}>
+                    <img src={HomeIcon} alt="Home" />
+                </button>
+                <button className='sidebar-link' onClick={() => navigate('/gallery')}>
                     <img src={GalleryIcon} alt="Gallery" />
-            </button>
-</nav>
+                </button>
+                <button className='sidebar-link' onClick={() => navigate('/messages')}>
+                    <img src={MessageIcon} alt="Messages" />
+                </button>
+            </nav>
         </aside>
     );
 };

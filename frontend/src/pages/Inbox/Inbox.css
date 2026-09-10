@@ -1,0 +1,75 @@
+.inbox-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #fff;
+}
+
+.inbox-main {
+    flex: 1;
+    padding: 40px;
+    max-width: 600px;
+}
+
+.inbox-main h1 {
+    margin: 0 0 24px;
+    font-size: 24px;
+    font-family: 'Inter', sans-serif;
+    color: #111;
+}
+
+.conversation-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.conversation-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 8px;
+    border-bottom: 1px solid #f2f2f2;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.conversation-item:hover {
+    background: #fafafa;
+}
+
+.conversation-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #111;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.conversation-info h3 {
+    margin: 0 0 2px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: #111;
+}
+
+.conversation-info p {
+    margin: 0;
+    font-size: 13px;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 400px;
+}
+
+.no-conversations {
+    color: #999;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+}
