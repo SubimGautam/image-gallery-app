@@ -37,6 +37,7 @@ async function startServer() {
         const db = client.db('ImageGalleryApp');
         const imagesCollection = db.collection('images');
         const usersCollection = db.collection('users');
+        const messagesCollection = db.collection('messages');
 
         app.get('/api/dashboard', authMiddleware, async (req,res) => {
             try{
@@ -53,6 +54,42 @@ async function startServer() {
                 })
             }
         })
+
+        app.get('/api/messages', authMiddleware, async (req, res) => {
+            try{
+                const messages = await messagesCollection.find({
+                    $or: [
+                        { senderId: req.userId },
+                        { receiverId: req.userId }
+                    ]
+                }).sort({ timestamp: -1 }).toArray();
+
+                const conversationMap = {};
+
+                messages.forEach((msg) => {
+                    const otherPersonId = msg.senderId === req.userId ? msg.receiverId : msg.senderId;
+
+                    if(!conversationMap[otherPersonId]){
+                        conversationMap[otherPersonId] = {
+                            userId: otherPersonId,
+                            lastMessage: msg.text,
+                            timestamp: msg.timestamp
+                        };
+                    }
+                });
+
+                const conversations = Object.values(conversationMap);
+
+                res.json(conversations);
+
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    message: 'Failed to get conversations'
+                });
+            }
+        });
+
         app.get('/api/images', authMiddleware ,async(req,res)=> {
             try{
                 const images = await imagesCollection.find({userId: req.userId}).toArray();
@@ -124,6 +161,38 @@ async function startServer() {
             }
         });
 
+        app.post('/api/messages', authMiddleware, async (req, res) => {
+            try{
+                const { receiverId, text } = req.body;
+
+                if(!receiverId || !text || text.trim() === ''){
+                    return res.status(400).json({
+                        message: 'receiverId and text are required'
+                    });
+                }
+
+                const message = {
+                    senderId: req.userId,
+                    receiverId: receiverId,
+                    text: text,
+                    timestamp: new Date()
+                };
+
+                const result = await messagesCollection.insertOne(message);
+
+                res.status(201).json({
+                    message: 'Message sent successfully',
+                    data: { ...message, _id: result.insertedId }
+                });
+
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    message: 'Failed to send message'
+                });
+            }
+        });
+
         app.post('/api/images/:id/save', authMiddleware, async (req, res) => {
             try{
                 const imageId = req.params.id;
@@ -166,6 +235,27 @@ async function startServer() {
                 console.log(error);
                 res.status(500).json({
                     message: 'Failed to unsave image'
+                });
+            }
+        });
+
+        app.get('/api/messages/:userId', authMiddleware, async (req, res) => {
+            try{
+                const otherUserId = req.params.userId;
+
+                const messages = await messagesCollection.find({
+                    $or: [
+                        { senderId: req.userId, receiverId: otherUserId },
+                        { senderId: otherUserId, receiverId: req.userId }
+                    ]
+                }).sort({ timestamp: 1 }).toArray();
+
+                res.json(messages);
+
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    message: 'Failed to get messages'
                 });
             }
         });

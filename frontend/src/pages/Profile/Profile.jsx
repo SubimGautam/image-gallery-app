@@ -4,6 +4,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import ImageCard from '../../components/ImageCard/ImageCard';
 import PreviewModal from '../../components/PreviewModal/PreviewModal';
 import './Profile.css';
+import ProfileAvatar from '../../components/ProfileAvatar/ProfileAvatar';
 
 const Profile = () => {
     const { id } = useParams();
@@ -150,12 +151,18 @@ const Profile = () => {
                         </div>
 
                         {!profile.isOwnProfile && (
-                            <button
-                                className={profile.isFollowing ? 'unfollow-btn' : 'follow-btn'}
-                                onClick={handleFollowToggle}
-                            >
-                                {profile.isFollowing ? 'Unfollow' : 'Follow'}
-                            </button>
+                            <div className='profile-actions'>
+                                <button
+                                    className={profile.isFollowing ? 'unfollow-btn' : 'follow-btn'}
+                                    onClick={handleFollowToggle}
+                                >
+                                    {profile.isFollowing ? 'Unfollow' : 'Follow'}
+                                </button>
+
+                                <button className='message-btn' onClick={() => navigate(`/messages/${id}`)}>
+                                    Message
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>
