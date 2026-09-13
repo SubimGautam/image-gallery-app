@@ -26,6 +26,43 @@ app.use('/uploads', express.static('uploads'));
 
 const client = new MongoClient(process.env.MONGO_URI);  // This creates a MongoDB client using your connection string.
 
+async function getImageLabels(filePath) {
+    try {
+        const imageBuffer = fs.readFileSync(filePath);
+
+        const credentials = Buffer.from(
+            `${process.env.IMAGGA_API_KEY}:${process.env.IMAGGA_API_SECRET}`
+        ).toString('base64');
+
+        const formdata = new FormData();
+        const imageBlob = new Blob([imageBuffer]);
+        formdata.append('image', imageBlob, 'image.jpg');
+
+        const response = await fetch('https://api.imagga.com/v2/tags', {
+            method: 'POST',
+            headers: {
+                Authorization: `Basic ${credentials}`
+            },
+            body: formdata
+        });
+
+        const data = await response.json();
+
+        if (!data.result || !data.result.tags) {
+            console.log('Imagga error response:', JSON.stringify(data, null, 2));
+            return [];
+        }
+
+        return data.result.tags
+            .slice(0, 8)
+            .map((tag) => tag.tag.en.toLowerCase());
+
+    } catch (error) {
+        console.log('Imagga API error:', error);
+        return [];
+    }
+}
+
 async function startServer() {
 
     try {
@@ -566,6 +603,7 @@ async function startServer() {
             userId: req.userId, 
             imageUrl: `/uploads/${req.file.filename}`,
             visibility: req.body.visibility || 'private',
+            autoTags: autoTags,
 
 
         };

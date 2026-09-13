@@ -123,23 +123,23 @@ const Gallery = () => {
     }
 
     const handleDelete = async (id) => {
-        try{
-            const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/images/${id}`, {
-                method: 'Delete',
-                headers: {
-                    Authorization: 'Bearer${token}'
-                }
-            });
-            const data = await response.json();
-            console.log(data)
-            if(response.ok){
-            setImages(images.filter((image) => image._id !== id));
+    try{
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5000/api/images/${id}`, {
+            method: 'DELETE',
+            headers: {
+                Authorization: `Bearer ${token}`
             }
-        }catch(error){
-            console.log(error);
+        });
+        const data = await response.json();
+        console.log(data)
+        if(response.ok){
+        setImages(images.filter((image) => image._id !== id));
         }
+    }catch(error){
+        console.log(error);
     }
+}
 
     const filterImages = images.filter((image) =>
         (image.author || '').toLowerCase().includes(search.toLowerCase()) &&

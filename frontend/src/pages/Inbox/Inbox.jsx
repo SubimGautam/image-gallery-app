@@ -28,6 +28,7 @@ const Inbox = () => {
 
     const [conversations, setConversations] = useState([]);
     const [userNames, setUserNames] = useState({});
+    const [userProfiles, setUserProfiles] = useState({});
     const [search, setSearch] = useState('');
 
     const [activeProfile, setActiveProfile] = useState(null);
@@ -50,17 +51,20 @@ const Inbox = () => {
                 if (response.ok) {
                     setConversations(data);
 
-                    const namesMap = {};
-                    for (const convo of data) {
-                        const profileResponse = await fetch(`http://localhost:5000/api/users/${convo.userId}`, {
-                            headers: { Authorization: `Bearer ${token}` }
-                        });
-                        const profileData = await profileResponse.json();
-                        if (profileResponse.ok) {
-                            namesMap[convo.userId] = profileData.name;
-                        }
-                    }
-                    setUserNames(namesMap);
+                    const profilesMap = {};
+for (const convo of data) {
+    const profileResponse = await fetch(`http://localhost:5000/api/users/${convo.userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    const profileData = await profileResponse.json();
+    if (profileResponse.ok) {
+        profilesMap[convo.userId] = {
+            name: profileData.name,
+            profilePicture: profileData.profilePicture
+        };
+    }
+}
+setUserProfiles(profilesMap);
                 }
             } catch (error) {
                 console.log(error);
@@ -146,9 +150,9 @@ const Inbox = () => {
     };
 
     const filteredConversations = conversations.filter((convo) => {
-        const name = userNames[convo.userId] || '';
-        return name.toLowerCase().includes(search.toLowerCase());
-    });
+    const name = userProfiles[convo.userId] ? userProfiles[convo.userId].name : '';
+    return name.toLowerCase().includes(search.toLowerCase());
+});
 
     if (!currentUser) return null;
 
@@ -178,12 +182,16 @@ const Inbox = () => {
                         >
                             <div
                                 className='conversation-avatar'
-                                style={{ background: getAvatarColor(convo.userId) }}
+                                style={!userProfiles[convo.userId]?.profilePicture ? { background: getAvatarColor(convo.userId) } : {}}
                             >
-                                {userNames[convo.userId] ? userNames[convo.userId].charAt(0).toUpperCase() : '?'}
+                                {userProfiles[convo.userId]?.profilePicture ? (
+                                    <img src={`http://localhost:5000${userProfiles[convo.userId].profilePicture}`} alt="" />
+                                ) : (
+                                    userProfiles[convo.userId] ? userProfiles[convo.userId].name.charAt(0).toUpperCase() : '?'
+                                )}
                             </div>
                             <div className='conversation-info'>
-                                <h3>{userNames[convo.userId] || 'Loading...'}</h3>
+                                <h3>{userProfiles[convo.userId] ? userProfiles[convo.userId].name : 'Loading...'}</h3>
                                 <p>{convo.lastMessage}</p>
                             </div>
                             <span className='conversation-time'>{formatTime(convo.timestamp)}</span>
@@ -202,9 +210,13 @@ const Inbox = () => {
                         <div className='chat-panel-header'>
                             <div
                                 className='conversation-avatar'
-                                style={{ background: getAvatarColor(userId) }}
+                                style={!activeProfile.profilePicture ? { background: getAvatarColor(userId) } : {}}
                             >
-                                {activeProfile.name ? activeProfile.name.charAt(0).toUpperCase() : '?'}
+                                {activeProfile.profilePicture ? (
+                                    <img src={`http://localhost:5000${activeProfile.profilePicture}`} alt="" />
+                                ) : (
+                                    activeProfile.name ? activeProfile.name.charAt(0).toUpperCase() : '?'
+                                )}
                             </div>
                             <div>
                                 <h2>{activeProfile.name}</h2>
@@ -220,9 +232,13 @@ const Inbox = () => {
                                     {msg.senderId !== currentUser.id && (
                                         <div
                                             className='chat-avatar-small'
-                                            style={{ background: getAvatarColor(userId) }}
+                                            style={!activeProfile.profilePicture ? { background: getAvatarColor(userId) } : {}}
                                         >
-                                            {activeProfile.name ? activeProfile.name.charAt(0).toUpperCase() : '?'}
+                                            {activeProfile.profilePicture ? (
+                                                <img src={`http://localhost:5000${activeProfile.profilePicture}`} alt="" />
+                                            ) : (
+                                                activeProfile.name ? activeProfile.name.charAt(0).toUpperCase() : '?'
+                                            )}
                                         </div>
                                     )}
                                     <div className='chat-bubble'>

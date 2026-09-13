@@ -244,3 +244,16 @@
     font-family: 'Inter', sans-serif;
     font-size: 15px;
 }
+
+.conversation-avatar,
+.chat-avatar-small {
+    overflow: hidden;
+}
+
+.conversation-avatar img,
+.chat-avatar-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
