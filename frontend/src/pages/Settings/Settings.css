@@ -31,3 +31,8 @@
     margin: 0 0 16px;
     font-family: 'Inter', sans-serif;
 }
+
+.settings-section input + br {
+    display: block;
+    margin-bottom: 10px;
+}
