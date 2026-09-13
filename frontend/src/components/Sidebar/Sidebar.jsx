@@ -4,6 +4,7 @@ import Logo from '../../assets/logo.png';
 import HomeIcon from '../../assets/home.png';
 import GalleryIcon from '../../assets/gallery.png';
 import MessageIcon from '../../assets/message.png';
+import SettingsIcon from '../../assets/settings.png';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -26,6 +27,10 @@ const Sidebar = () => {
                     <img src={MessageIcon} alt="Messages" />
                 </button>
             </nav>
+
+            <button className='sidebar-link sidebar-settings' onClick={() => navigate('/settings')}>
+                <img src={SettingsIcon} alt="Settings" />
+            </button>
         </aside>
     );
 };

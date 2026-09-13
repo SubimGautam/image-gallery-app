@@ -12,6 +12,10 @@
     top: 0;
 }
 
+.sidebar-settings {
+    margin-top: auto;
+}
+
 .sidebar-logo {
     margin-bottom: 28px;
 }

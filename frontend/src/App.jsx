@@ -8,6 +8,7 @@ import Profile from './pages/Profile/Profile';
 import Chat from './pages/Chat/Chat';
 import Landing from './pages/Landing/Landing';
 import Inbox from './pages/Inbox/Inbox';
+import Settings from './pages/Settings/Settings';
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/profile/:id" element={<Profile />} />
         </Routes>
     );

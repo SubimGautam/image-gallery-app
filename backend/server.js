@@ -538,6 +538,90 @@ async function startServer() {
             }
         });
 
+        app.put('/api/users/:id/name', authMiddleware, async (req, res) => {
+            try{
+                const targetId = req.params.id;
+
+                if(targetId !== req.userId){
+                    return res.status(401).json({
+                        message: 'You can only update your own name'
+                    });
+                }
+
+                const { name } = req.body;
+
+                if(!name || name.trim() === ''){
+                    return res.status(400).json({
+                        message: 'Name cannot be empty'
+                    });
+                }
+
+                await usersCollection.updateOne(
+                    { _id: new ObjectId(req.userId) },
+                    { $set: { name: name.trim() } }
+                );
+
+                res.json({
+                    message: 'Name updated successfully',
+                    name: name.trim()
+                });
+
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    message: 'Failed to update name'
+                });
+            }
+        });
+
+
+        app.put('/api/users/:id/password', authMiddleware, async (req, res) => {
+            try{
+                const targetId = req.params.id;
+
+                if(targetId !== req.userId){
+                    return res.status(401).json({
+                        message: 'You can only change your own password'
+                    });
+                }
+
+                const { currentPassword, newPassword } = req.body;
+
+                if(!currentPassword || !newPassword){
+                    return res.status(400).json({
+                        message: 'Current and new password are required'
+                    });
+                }
+
+                const user = await usersCollection.findOne({
+                    _id: new ObjectId(req.userId)
+                });
+
+                const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+
+                if(!passwordMatch){
+                    return res.status(401).json({
+                        message: 'Current password is incorrect'
+                    });
+                }
+
+                const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+                await usersCollection.updateOne(
+                    { _id: new ObjectId(req.userId) },
+                    { $set: { password: hashedPassword } }
+                );
+
+                res.json({ message: 'Password updated successfully' });
+
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    message: 'Failed to update password'
+                });
+            }
+        });
+
         app.post('/api/login', async (req, res) => {
             try{
                 const { email, password } = req.body; // extracts info from frontend

@@ -1,0 +1,33 @@
+.settings-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #fff;
+}
+
+.settings-main {
+    flex: 1;
+    padding: 40px;
+    max-width: 600px;
+}
+
+.settings-main h1 {
+    margin: 0 0 30px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #111;
+    font-family: 'Inter', sans-serif;
+}
+
+.settings-section {
+    margin-bottom: 36px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid #eee;
+}
+
+.settings-section h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 16px;
+    font-family: 'Inter', sans-serif;
+}
